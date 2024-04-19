@@ -9,7 +9,9 @@ docker network create sso
 
 cp .env.example .env
 
-make run
+make all (first time to run)
+make run (start application)
+make shell (execute inside container)
 ```
 
 ### OpenID Connect Configuration

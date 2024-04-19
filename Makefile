@@ -4,7 +4,7 @@ DOCKER_COMPOSE=$(if $(shell which docker compose),docker compose,docker-compose)
 help:
 	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | sort | awk 'BEGIN {FS = ":.*?## "}; {printf "⚡ \033[34m%-30s\033[0m %s\n", $$1, $$2}'
 
-all: build run
+all: build run composer-install
 
 build: ## Build docker image
 	$(DOCKER_COMPOSE) build --no-cache

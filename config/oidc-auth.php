@@ -1,0 +1,95 @@
+<?php
+
+return [
+
+    /*
+    |--------------------------------------------------------------------------
+    | OIDC Provider Config
+    |--------------------------------------------------------------------------
+    |
+    | This options to pass to OpenIDConnectClient\OpenIDConnectProvider.
+    | `redirectUri` will be determined automatically by `callback_route` below.
+    | `urlResourceOwnerDetails` is unused by us.
+    | `publicKey` is in PEM format, either the content or `file://` to read
+    |  from file.
+    |
+     */
+    'provider' => [
+        'clientId' => env('OIDC_CLIENT_ID'),
+        'clientSecret' => env('OIDC_CLIENT_SECRET'),
+        'idTokenIssuer' => env('OIDC_TOKEN_ISSUER'),
+        'urlAuthorize' => env('OIDC_AUTHORIZE_URL'),
+        'urlAccessToken' => env('OIDC_ACCESS_TOKEN_URL'),
+        'urlResourceOwnerDetails' => env('OIDC_RESOURCE_OWNER_DETAILS_URL'),
+        'scopes' => array_filter(explode(',', env('OIDC_SCOPES', 'openid,email,profile'))),
+        'publicKey' => 'file:///'.base_path(env('OIDC_CERT_FILE')),
+    ],
+
+    /*
+    |--------------------------------------------------------------------------
+    | Callback Route
+    |--------------------------------------------------------------------------
+    |
+    | Callback route used by Authorization Code flow.
+    |
+     */
+    'callback_route' => env('CALLBACK_ROUTE', '/oidc/callback'),
+
+    /*
+    |--------------------------------------------------------------------------
+    | Authenticatable Factory
+    |--------------------------------------------------------------------------
+    |
+    | Factory to get Illuminate\Contracts\Auth\Authenticatable to use, see
+    | LaravelOIDCAuth\UserFactoryInterface.
+    | For example, you can use Eloquent model as Authenticatable to store
+    | user information in DB.
+    | A OpenIDConnectClient\AccessToken will be passed to authenticatable()
+    |
+     */
+    'authenticatable_factory' => \LaravelOIDCAuth\UserFactory::class,
+
+    /*
+    |--------------------------------------------------------------------------
+    | Required Claims
+    |--------------------------------------------------------------------------
+    |
+    | JWT claims in id_token required to authenticate. Arrays set required
+    | elements in an array. Other values are matched exactly.
+    |
+    | This can also be a Closure to check id_token. id_token will be passed as
+    | the first parameter. Return true to indicate a pass or false for a fail.
+    |
+     */
+    'required_claims' => [
+        //'name' => 'value',
+        //'array' => ['required', 'elements'],
+    ],
+
+    /*
+    |--------------------------------------------------------------------------
+    | Default Redirect URL after Authentication
+    |--------------------------------------------------------------------------
+    |
+    | The callback route, after successful authentication, redirects user to
+    | previously intended location. This is set when user is redirected from
+    | Authenticate middleware of Laravel and this library.
+    |
+    | This config sets the default URL when the intended URL was not set, which
+    | may happen, like, when you, instead of using Authenticate middleware of
+    | this library, build an intermediate login page that leads the user to
+    | OIDC Authorization Endpoint, and user manually visit that login page.
+    |
+    | DEPRECATED: Just link to an auth-protected page on the intermediate page
+    | instead of building OIDC Authorization Endpoint URL, and let the auth
+    | middleware do the work for you as usual. Adds an extra round-trip but
+    | simplifies consumer code.
+    |
+     */
+    'redirect_path_after_login' => env('OIDC_REDIRECT_PATH_AFTER_LOGIN', '/'),
+
+    /**
+     * Redirect url after logout in application.
+     */
+    'redirect_url_after_logout' => env('OIDC_REDIRECT_URL_AFTER_LOGOUT'),
+];

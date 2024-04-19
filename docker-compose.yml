@@ -1,0 +1,36 @@
+version: '3.4'
+
+services:
+  app:
+    image: pnlinh/laravel:php${PHP_VERSION:-8.3}
+    hostname: "${DOCKER_PREFIX_NAME}-app"
+    container_name: "${DOCKER_PREFIX_NAME}-app"
+    environment:
+      PHP_IDE_CONFIG: serverName="${DOCKER_PREFIX_NAME}-app.docker.cli"
+    extra_hosts:
+      - host.docker.internal:host-gateway
+    volumes:
+      - ./:/var/www/html
+    networks:
+      - sso
+
+  redis-1:
+    image: redis:alpine
+    container_name: "${DOCKER_PREFIX_NAME}-redis"
+    volumes:
+      - redis-data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      retries: 3
+      timeout: 5s
+    networks:
+      - sso
+
+volumes:
+  redis-data:
+    driver: local
+
+networks:
+  sso:
+    external: true
+    name: sso
